@@ -117,7 +117,7 @@ class HistoricCSVDataHandler(DataHandler):
         try:
             bars_list = self.latest_symbol_data[symbol]
         except KeyError:
-            print "That symbol is not available in the historical data set."
+            print("That symbol is not available in the historical data set.")
         else:
             return bars_list[-N:]
 
@@ -135,3 +135,44 @@ class HistoricCSVDataHandler(DataHandler):
                 if bar is not None:
                     self.latest_symbol_data[s].append(bar)
         self.events.put(MarketEvent())
+
+class SimpleCSVHandler(DataHandler):
+    '''
+    SimpleCSVHandler mimics the functionality of HistoricCSVDataHandler
+    but works with only one CSV file, hence one symbol and period, at a
+    time.
+    '''
+
+    def __init__(self, eventQ, csv):
+        '''
+        eventQ - the queue onto which to push new events
+        csv - absolute directory path string to the CSV file
+        '''
+        self.eventQ = eventQ
+        self.csv = csv
+
+        self.latest_symbol_data = []
+        self.continue_backtest = True
+
+        # open the CSV into a pandas dataframe, remove null rows
+        self.bars = pd.read_csv(csv).dropna().reset_index(drop = True)
+
+        # create the generator for the bars
+        self.new_bar = self._get_new_bar()
+
+    def _get_new_bar(self):
+        for b in self.bars.iterrows():
+            yield (b[1][0], b[1][1], b[1][2], b[1][3], b[1][4], b[1][5], b[1][6])
+
+    def get_latest_bars(self, symbol=None, N=1):
+        return self.latest_symbol_data[-N:]
+
+    def update_bars(self):
+        try:
+            bar = next(self.new_bar)
+        except StopIteration:
+            self.continue_backtest = False
+        else:
+            if bar is not None:
+                self.latest_symbol_data.append(bar)
+        self.eventQ.append(MarketEvent())
