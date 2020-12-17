@@ -11,6 +11,8 @@ print(bars.get_latest_bars())
 bars.update_bars()
 bars.update_bars()
 print(bars.get_latest_bars(N=3))
+print()
+print(events)
 
 '''
 strategy = Strategy(..)

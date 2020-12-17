@@ -148,7 +148,7 @@ class SimpleCSVHandler(DataHandler):
         eventQ - the queue onto which to push new events
         csv - absolute directory path string to the CSV file
         '''
-        self.eventQ = eventQ
+        self.events = events
         self.csv = csv
 
         self.latest_symbol_data = []
@@ -175,4 +175,4 @@ class SimpleCSVHandler(DataHandler):
         else:
             if bar is not None:
                 self.latest_symbol_data.append(bar)
-        self.eventQ.append(MarketEvent())
+        self.events.append(MarketEvent())
