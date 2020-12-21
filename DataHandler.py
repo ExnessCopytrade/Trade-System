@@ -132,8 +132,7 @@ class HistoricCSVDataHandler(DataHandler):
         (sybmbol, datetime, open, high, low, close, adj close, volume).
         """
         for b in self.symbol_data[symbol]:
-            yield tuple([symbol, datetime.datetime.strptime(b[1][0], '%Y-%m-%d %H:%M:%S'),
-                        b[1][1], b[1][2], b[1][3], b[1][4], b[1][5]], b[1][6]])
+            yield tuple([symbol, b[0][0], b[1][1], b[1][2], b[1][3], b[1][4], b[1][5], b[1][6]])
 
     def get_latest_bars(self, symbol, N=1):
         """
