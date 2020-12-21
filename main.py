@@ -1,5 +1,5 @@
 from DataHandler import SimpleCSVHandler
-from Strategy import SMACrossover
+from Strategy import SimpleBuy
 
 # Declare the components with respective parameters
 events = []
