@@ -20,24 +20,24 @@ while True:
 
     # Handle the events
     while True:
-        try:
-            event = events.get(False)
-        except Queue.Empty:
-            break
+        event = None
+        if len(events) > 0:
+            event = events.pop(0)
         else:
-            if event is not None:
-                if event.type == 'MARKET':
-                    strategy.calculate_signals(event)
-                    port.update_timeindex(event)
+            break
+        if event is not None:
+            if event.type == 'MARKET':
+                strategy.calculate_signals(event)
+                port.update_timeindex(event)
 
-                elif event.type == 'SIGNAL':
-                    port.update_signal(event)
+            elif event.type == 'SIGNAL':
+                port.update_signal(event)
 
-                elif event.type == 'ORDER':
-                    broker.execute_order(event)
+            elif event.type == 'ORDER':
+                broker.execute_order(event)
 
-                elif event.type == 'FILL':
-                    port.update_fill(event)
+            elif event.type == 'FILL':
+                port.update_fill(event)
 
     # 10-Minute heartbeat
     #time.sleep(10*60)

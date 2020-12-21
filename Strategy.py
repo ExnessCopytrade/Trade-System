@@ -162,5 +162,5 @@ class SimpleBuy(Strategy):
                 bars = self.bars.get_latest_bars(s, N=1)
                 if bars is not None and bars != []:
                     # (Symbol, Datetime, Type = LONG, SHORT or EXIT)
-                    events.append(SignalEvent(bars[0][0], bars[0][1], 'EXIT'))
-                    events.append(SignalEvent(bars[0][0], bars[0][1], 'LONG'))
+                    self.events.append(SignalEvent(bars[0][0], bars[0][1], 'EXIT'))
+                    self.events.append(SignalEvent(bars[0][0], bars[0][1], 'LONG'))
