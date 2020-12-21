@@ -143,3 +143,18 @@ class SMACrossover(Strategy):
         for date,open,high,low,close,adj,vol in b[:-1]:
             accum += close
         return accum/p
+
+class SimpleBuy(Strategy):
+    '''
+    A simple strategy that goes long, holds for 1 period, then closes.
+    '''
+    def __init__(self, bars, events):
+        self.bars = bars
+        self.events = events
+
+    def calculate_signals(self, event):
+        '''
+        Generate a single signal since we are dealing with a single symbol
+        '''
+        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'CLOSE_ALL'))
+        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'LONG'))

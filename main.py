@@ -4,7 +4,7 @@ from Strategy import SMACrossover
 # Declare the components with respective parameters
 events = []
 bars = SimpleCSVHandler(events, 'C:/users/hunte/repos/trade/data/EURUSD_DAILY_5YR.csv')
-strategy = SMACrossover(bars, events)
+strategy = SimpleBuy(bars, events)
 
 '''
 port = Portfolio(..)
