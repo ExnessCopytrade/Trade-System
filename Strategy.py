@@ -155,7 +155,7 @@ class SimpleBuy(Strategy):
 
     def calculate_signals(self, event):
         '''
-        Generate a single signal since we are dealing with a single symbol
+        exit the previous position and enter a new one
         '''
         if event.type == 'MARKET':
             for s in self.symbol_list:
