@@ -6,10 +6,10 @@ from ExecutionHandler import SimulatedExecutionHandler
 # Declare the components with respective parameters
 events = [] # event queue
 symbols = ['EURUSD_1D'] # just the eurusd daily for now
-bars = HistoricCSVDataHandler(events, 'C:/users/hunte/repos/trade/data/')
+bars = HistoricCSVDataHandler(events, 'C:/users/hunte/repos/trade/data/', symbols)
 strategy = SimpleBuy(bars, events)
 port = NaivePortfolio(bars, events, None)
-broker = ExecutionHandler(events)
+broker = SimulatedExecutionHandler(events)
 
 while True:
     # Update the bars (specific backtest code, as opposed to live trading)
@@ -41,3 +41,4 @@ while True:
 
     # 10-Minute heartbeat
     #time.sleep(10*60)
+    break

@@ -1,7 +1,6 @@
 # ExecutionHandler.py
 
 import datetime
-import Queue
 
 from abc import ABCMeta, abstractmethod
 

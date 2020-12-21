@@ -3,7 +3,6 @@
 import datetime
 import numpy as np
 import pandas as pd
-import Queue
 
 from abc import ABCMeta, abstractmethod
 from math import floor

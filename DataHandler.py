@@ -71,6 +71,9 @@ class HistoricCSVDataHandler(DataHandler):
         #self._open_convert_csv_files()
         self._new_open_convert_csv_files()
 
+        # Instiantiate the generators
+        self.new_bar = {k:v for (k,v) in [(s, self._get_new_bar(s)) for s in symbol_list]}
+
     def _open_convert_csv_files(self):
         """
         Opens the CSV files from the data directory, converting
@@ -101,7 +104,7 @@ class HistoricCSVDataHandler(DataHandler):
         for s in self.symbol_list:
             self.symbol_data[s] = self.symbol_data[s].reindex(index=comb_index, method='pad').iterrows()
 
-    def _new_open_convert_csv_files():
+    def _new_open_convert_csv_files(self):
         '''
         Date,Open,High,Low,Close,Adj Close,Volume
         '''
@@ -126,11 +129,11 @@ class HistoricCSVDataHandler(DataHandler):
     def _get_new_bar(self, symbol):
         """
         Returns the latest bar from the data feed as a tuple of
-        (sybmbol, datetime, open, low, high, close, volume).
+        (sybmbol, datetime, open, high, low, close, adj close, volume).
         """
         for b in self.symbol_data[symbol]:
-            yield tuple([symbol, datetime.datetime.strptime(b[0], '%Y-%m-%d %H:%M:%S'),
-                        b[1][0], b[1][1], b[1][2], b[1][3], b[1][4]])
+            yield tuple([symbol, datetime.datetime.strptime(b[1][0], '%Y-%m-%d %H:%M:%S'),
+                        b[1][1], b[1][2], b[1][3], b[1][4], b[1][5]], b[1][6]])
 
     def get_latest_bars(self, symbol, N=1):
         """
@@ -151,7 +154,7 @@ class HistoricCSVDataHandler(DataHandler):
         """
         for s in self.symbol_list:
             try:
-                bar = self._get_new_bar(s).next()
+                bar = next(self.new_bar[s])
             except StopIteration:
                 self.continue_backtest = False
             else:
