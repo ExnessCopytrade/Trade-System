@@ -143,7 +143,7 @@ class SimpleCSVHandler(DataHandler):
     time.
     '''
 
-    def __init__(self, eventQ, csv):
+    def __init__(self, events, csv):
         '''
         eventQ - the queue onto which to push new events
         csv - absolute directory path string to the CSV file

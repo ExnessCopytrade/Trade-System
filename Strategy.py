@@ -3,7 +3,6 @@
 import datetime
 import numpy as np
 import pandas as pd
-import Queue
 
 from abc import ABCMeta, abstractmethod
 
@@ -85,3 +84,62 @@ class BuyAndHoldStrategy(Strategy):
                         signal = SignalEvent(bars[0][0], bars[0][1], 'LONG')
                         self.events.put(signal)
                         self.bought[s] = True
+
+class SMACrossover(Strategy):
+    '''
+    Simple Moving Average Crossover
+    SELL SHORT if the 5MA crossed below the 20MA between the last two full bars
+    BUY LONG if the 5MA crosses above the 20MA between the last two full bars
+    Hold each position for one period (deal with close somewhere else?)
+    '''
+
+    def __init__(self, bars, events):
+        self.bars = bars
+        self.events = events
+        self.slow = 20 # the longer period
+        self.fast = 5 # the Shorter period
+
+    def calculate_signals(self, event):
+        '''
+        Generate a single signal since we are dealing with a single symbol
+        '''
+        # close logic here? implement later
+        try:
+            s1 = SMA_back1(self.slow)
+            f1 = SMA_back1(self.fast)
+            s2 = SMA(self.slow)
+            f2 = SMA(self.fast)
+        except:
+            return
+        else:
+            if s1 < f1 and s2 > f2:
+                # cross below
+                self.events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'SHORT'))
+            elif s1 > f1 and s2 < f2:
+                # cross above
+                self.events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'LONG'))
+
+    # eventually I will generalize my strategy and
+    # move my indicators into their own class to be more flexible
+    # i hope these work correctly
+    def SMA(p):
+        # first check that there are enough bars to calculate
+        b = bars.get_latest_bars(p)
+        if len(b) < p:
+            raise Exception
+
+        accum = 0
+        for date,open,high,low,close,adj,vol in b:
+            accum += close
+        return accum/p
+
+    def SMA_back1(p):
+        # first check that there are enough bars to calculate
+        b = bars.get_latest_bars(p+1)
+        if len(b) < p+1:
+            raise Exception
+
+        accum = 0
+        for date,open,high,low,close,adj,vol in b[:-1]:
+            accum += close
+        return accum/p
