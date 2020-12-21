@@ -1,9 +1,10 @@
-from DataHandler import SimpleCSVHandler
+from DataHandler import HistoricCSVDataHandler
 from Strategy import SimpleBuy
 
 # Declare the components with respective parameters
 events = []
-bars = SimpleCSVHandler(events, 'C:/users/hunte/repos/trade/data/EURUSD_DAILY_5YR.csv')
+symbols = ['EURUSD_1D'] # just the eurusd daily for now
+bars = HistoricCSVDataHandler(events, 'C:/users/hunte/repos/trade/data/')
 strategy = SimpleBuy(bars, events)
 
 '''

@@ -44,6 +44,7 @@ class NaivePortfolio(Portfolio):
     used to test simpler strategies such as BuyAndHoldStrategy.
     """
 
+    # Initializiation methods
     def __init__(self, bars, events, start_date, initial_capital=100000.0):
         """
         Initialises the portfolio with bars and an event queue.
@@ -100,6 +101,7 @@ class NaivePortfolio(Portfolio):
         d['total'] = self.initial_capital
         return d
 
+    # Implicit MarketEvent methods
     def update_timeindex(self, event):
         """
         Adds a new record to the positions matrix for the current
@@ -138,6 +140,7 @@ class NaivePortfolio(Portfolio):
         # Append the current holdings
         self.all_holdings.append(dh)
 
+    # FillEvent methods
     def update_positions_from_fill(self, fill):
         """
         Takes a FilltEvent object and updates the position matrix
@@ -188,6 +191,7 @@ class NaivePortfolio(Portfolio):
             self.update_positions_from_fill(event)
             self.update_holdings_from_fill(event)
 
+    # OrderEvent methods
     def generate_naive_order(self, signal):
         """
         Simply transacts an OrderEvent object as a constant quantity
@@ -227,6 +231,7 @@ class NaivePortfolio(Portfolio):
             order_event = self.generate_naive_order(event)
             self.events.put(order_event)
 
+    # Extra methods
     def create_equity_curve_dataframe(self):
         """
         Creates a pandas DataFrame from the all_holdings

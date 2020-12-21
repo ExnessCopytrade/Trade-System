@@ -68,7 +68,8 @@ class HistoricCSVDataHandler(DataHandler):
         self.latest_symbol_data = {}
         self.continue_backtest = True
 
-        self._open_convert_csv_files()
+        #self._open_convert_csv_files()
+        self._new_open_convert_csv_files()
 
     def _open_convert_csv_files(self):
         """
@@ -86,6 +87,28 @@ class HistoricCSVDataHandler(DataHandler):
                                       header=0, index_col=0,
                                       names=['datetime','open','low','high','close','volume','oi']
                                   )
+
+            # Combine the index to pad forward values
+            if comb_index is None:
+                comb_index = self.symbol_data[s].index
+            else:
+                comb_index.union(self.symbol_data[s].index)
+
+            # Set the latest symbol_data to None
+            self.latest_symbol_data[s] = []
+
+        # Reindex the dataframes
+        for s in self.symbol_list:
+            self.symbol_data[s] = self.symbol_data[s].reindex(index=comb_index, method='pad').iterrows()
+
+    def _new_open_convert_csv_files():
+        '''
+        Date,Open,High,Low,Close,Adj Close,Volume
+        '''
+        comb_index = None
+        for s in self.symbol_list:
+            # Load the CSV files, which already have the Yahoo headers
+            self.symbol_data[s] = pd.read_csv(os.path.join(self.csv_dir, '%s.csv' % s)).dropna().reset_index(drop = True)
 
             # Combine the index to pad forward values
             if comb_index is None:

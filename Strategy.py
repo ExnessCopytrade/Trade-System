@@ -156,5 +156,5 @@ class SimpleBuy(Strategy):
         '''
         Generate a single signal since we are dealing with a single symbol
         '''
-        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'CLOSE_ALL'))
+        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'EXIT'))
         events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'LONG'))
