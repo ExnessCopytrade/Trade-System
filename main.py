@@ -34,7 +34,8 @@ while True:
                 port.update_signal(event)
 
             elif event.type == 'ORDER':
-                broker.execute_order(event)
+                # commenting this out until I can solve the "fill_cost" debacle
+                #broker.execute_order(event)
 
             elif event.type == 'FILL':
                 port.update_fill(event)
