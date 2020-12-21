@@ -36,10 +36,10 @@ while True:
             elif event.type == 'ORDER':
                 # commenting this out until I can solve the "fill_cost" debacle
                 #broker.execute_order(event)
+                pass
 
             elif event.type == 'FILL':
                 port.update_fill(event)
 
     # 10-Minute heartbeat
     #time.sleep(10*60)
-    break
