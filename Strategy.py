@@ -150,11 +150,17 @@ class SimpleBuy(Strategy):
     '''
     def __init__(self, bars, events):
         self.bars = bars
+        self.symbol_list = self.bars.symbol_list
         self.events = events
 
     def calculate_signals(self, event):
         '''
         Generate a single signal since we are dealing with a single symbol
         '''
-        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'EXIT'))
-        events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'LONG'))
+        if event.type == 'MARKET':
+            for s in self.symbol_list:
+                bars = self.bars.get_latest_bars(s, N=1)
+                if bars is not None and bars != []:
+                    # (Symbol, Datetime, Type = LONG, SHORT or EXIT)
+                    events.append(SignalEvent(bars[0][0], bars[0][1], 'EXIT'))
+                    events.append(SignalEvent(bars[0][0], bars[0][1], 'LONG'))
