@@ -132,7 +132,7 @@ class HistoricCSVDataHandler(DataHandler):
         (sybmbol, datetime, open, high, low, close, adj close, volume).
         """
         for b in self.symbol_data[symbol]:
-            yield tuple([symbol, b[0][0], b[1][1], b[1][2], b[1][3], b[1][4], b[1][5], b[1][6]])
+            yield tuple([symbol, b[1][0], b[1][1], b[1][2], b[1][3], b[1][4], b[1][5], b[1][6]])
 
     def get_latest_bars(self, symbol, N=1):
         """
@@ -159,7 +159,7 @@ class HistoricCSVDataHandler(DataHandler):
             else:
                 if bar is not None:
                     self.latest_symbol_data[s].append(bar)
-        self.events.put(MarketEvent())
+        self.events.append(MarketEvent())
 
 class SimpleCSVHandler(DataHandler):
     '''

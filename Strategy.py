@@ -82,7 +82,7 @@ class BuyAndHoldStrategy(Strategy):
                     if self.bought[s] == False:
                         # (Symbol, Datetime, Type = LONG, SHORT or EXIT)
                         signal = SignalEvent(bars[0][0], bars[0][1], 'LONG')
-                        self.events.put(signal)
+                        self.events.append(signal)
                         self.bought[s] = True
 
 class SMACrossover(Strategy):

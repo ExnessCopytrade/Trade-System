@@ -228,7 +228,7 @@ class NaivePortfolio(Portfolio):
         """
         if event.type == 'SIGNAL':
             order_event = self.generate_naive_order(event)
-            self.events.put(order_event)
+            self.events.append(order_event)
 
     # Extra methods
     def create_equity_curve_dataframe(self):
