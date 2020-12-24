@@ -62,10 +62,19 @@ class NaivePortfolio(Portfolio):
         self.start_date = start_date
         self.initial_capital = initial_capital
 
+        # position: quantity of asset held. negative means short position
+        # all_positions: array of dictionaries mapping symbols to quantities
+        #    along with datetime
         self.all_positions = self.construct_all_positions()
+        # current_positions: dictionary mapping symbols to quantities
         self.current_positions = dict( (k,v) for k, v in [(s, 0) for s in self.symbol_list] )
 
+        # holding: current market value of held positions
+        # all_holdings: array of dictionaries mapping symbols to values
+        #    along with  datetime, cash, commission, and total equity
         self.all_holdings = self.construct_all_holdings()
+        # current_holdings: dictionary mapping symbols to values
+        #    along with cash, commission, and total equity
         self.current_holdings = self.construct_current_holdings()
 
     def construct_all_positions(self):
@@ -100,7 +109,7 @@ class NaivePortfolio(Portfolio):
         d['total'] = self.initial_capital
         return d
 
-    # Implicit MarketEvent methods
+    # MarketEvent method
     def update_timeindex(self, event):
         """
         Adds a new record to the positions matrix for the current
@@ -108,6 +117,11 @@ class NaivePortfolio(Portfolio):
         current market data at this stage is known (OLHCVI).
 
         Makes use of a MarketEvent from the events queue.
+
+        all_positions and all_holdings are updated now with what was
+        the current_positions and currennt_holdings. but the
+        current_positions and current_holdings will be updated when
+        a FillEvent is received.
         """
         bars = {}
         for sym in self.symbol_list:

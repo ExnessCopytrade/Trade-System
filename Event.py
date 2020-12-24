@@ -113,6 +113,10 @@ class FillEvent(Event):
         self.direction = direction
         self.fill_cost = fill_cost
 
+        # TEMPORARY: IGNORE COMMISSIONS
+        self.commission = 0
+        return
+
         # Calculate commission
         if commission is None:
             self.commission = self.calculate_ib_commission()
