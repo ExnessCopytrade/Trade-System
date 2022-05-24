@@ -1,3 +1,5 @@
 notes:
 may need to add lines in portfolio:update_timeindex to update datetime
   of current_positions and current_holdings
+changed the constructor of the FillEvent to ignore commissions altogether
+  as a temporary fix to the "fill_cost" debacle

@@ -1,5 +1,6 @@
 from DataHandler import HistoricCSVDataHandler
 from Strategy import SimpleBuy
+from Strategy import BuyAndHoldStrategy
 from Portfolio import NaivePortfolio
 from ExecutionHandler import SimulatedExecutionHandler
 
@@ -7,11 +8,14 @@ from ExecutionHandler import SimulatedExecutionHandler
 events = [] # event queue
 symbols = ['EURUSD_1D'] # just the eurusd daily for now
 bars = HistoricCSVDataHandler(events, 'C:/users/hunte/repos/trade/data/', symbols)
-strategy = SimpleBuy(bars, events)
-port = NaivePortfolio(bars, events, None)
+strategy = BuyAndHoldStrategy(bars, events)
+port = NaivePortfolio(bars, events, None, 1000)
 broker = SimulatedExecutionHandler(events)
 
+y=0
 while True:
+    x = port.current_holdings['total']
+    print('{:,.4f}'.format(x))
     # Update the bars (specific backtest code, as opposed to live trading)
     if bars.continue_backtest == True:
         bars.update_bars()
@@ -43,3 +47,9 @@ while True:
 
     # 10-Minute heartbeat
     #time.sleep(10*60)
+    #print(bars.get_latest_bars(symbols[0], N=1)[0])
+    if y < 50:
+        y += 1
+        pass
+    else:
+        break
