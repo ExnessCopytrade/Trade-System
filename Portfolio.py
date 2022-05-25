@@ -146,7 +146,7 @@ class NaivePortfolio(Portfolio):
 
         for s in self.symbol_list:
             # Approximation to the real value
-            market_value = self.current_positions[s] * bars[s][0][5]
+            market_value = self.current_positions[s] * bars[s][0][5] # close price
             dh[s] = market_value
             dh['total'] += market_value
 
@@ -194,6 +194,7 @@ class NaivePortfolio(Portfolio):
         self.current_holdings['commission'] += fill.commission
         self.current_holdings['cash'] -= (cost + fill.commission)
         self.current_holdings['total'] -= (cost + fill.commission)
+        print('portfolio: holdings updated with close price. cost = ', cost)
 
     def update_fill(self, event):
         """
@@ -224,15 +225,18 @@ class NaivePortfolio(Portfolio):
         cur_quantity = self.current_positions[symbol]
         order_type = 'MKT'
 
-        if direction == 'LONG' and cur_quantity == 0:
+        if direction == 'LONG':# and cur_quantity == 0:
             order = OrderEvent(symbol, order_type, mkt_quantity, 'BUY')
-        if direction == 'SHORT' and cur_quantity == 0:
+        if direction == 'SHORT':# and cur_quantity == 0:
             order = OrderEvent(symbol, order_type, mkt_quantity, 'SELL')
 
         if direction == 'EXIT' and cur_quantity > 0:
             order = OrderEvent(symbol, order_type, abs(cur_quantity), 'SELL')
         if direction == 'EXIT' and cur_quantity < 0:
             order = OrderEvent(symbol, order_type, abs(cur_quantity), 'BUY')
+
+        if order == None:
+            raise Exception('Portfolio: invalid signal: dir={}, qty={}'.format(direction, cur_quantity))
         return order
 
     def update_signal(self, event):
@@ -242,6 +246,7 @@ class NaivePortfolio(Portfolio):
         """
         if event.type == 'SIGNAL':
             order_event = self.generate_naive_order(event)
+            print('portfolio: new order: symbol={}, type={}, qty={}, dir={}'.format(order_event.symbol, order_event.order_type, order_event.quantity, order_event.direction))
             self.events.append(order_event)
 
     # Extra methods

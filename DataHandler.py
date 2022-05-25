@@ -106,6 +106,8 @@ class HistoricCSVDataHandler(DataHandler):
 
     def _new_open_convert_csv_files(self):
         '''
+        To handle CSVs that are in a different form than the tutorial.
+        _get_new_bar() also considers this format, diverging from the tutorial.
         Date,Open,High,Low,Close,Adj Close,Volume
         '''
         comb_index = None

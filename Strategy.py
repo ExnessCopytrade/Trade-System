@@ -152,6 +152,13 @@ class SimpleBuy(Strategy):
         self.bars = bars
         self.symbol_list = self.bars.symbol_list
         self.events = events
+        self.bought = self._calculate_initial_bought()
+
+    def _calculate_initial_bought(self):
+        bought = {}
+        for s in self.symbol_list:
+            bought[s] = False
+        return bought
 
     def calculate_signals(self, event):
         '''
@@ -162,5 +169,9 @@ class SimpleBuy(Strategy):
                 bars = self.bars.get_latest_bars(s, N=1)
                 if bars is not None and bars != []:
                     # (Symbol, Datetime, Type = LONG, SHORT or EXIT)
-                    self.events.append(SignalEvent(bars[0][0], bars[0][1], 'EXIT'))
-                    self.events.append(SignalEvent(bars[0][0], bars[0][1], 'LONG'))
+                    if self.bought[s] == True:
+                        self.events.append(SignalEvent(bars[0][0], bars[0][1], 'EXIT'))
+                        self.bought[s] = False
+                    else:
+                        self.events.append(SignalEvent(bars[0][0], bars[0][1], 'LONG'))
+                        self.bought[s] = True
