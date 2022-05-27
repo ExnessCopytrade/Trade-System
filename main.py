@@ -1,6 +1,7 @@
 from DataHandler import HistoricCSVDataHandler
 from Strategy import SimpleBuy
 from Strategy import BuyAndHoldStrategy
+from Strategy import SMACrossover
 from Portfolio import NaivePortfolio
 from ExecutionHandler import SimulatedExecutionHandler
 
@@ -8,7 +9,7 @@ from ExecutionHandler import SimulatedExecutionHandler
 events = [] # event queue
 symbols = ['EURUSD_1D'] # just the eurusd daily for now
 bars = HistoricCSVDataHandler(events, 'C:/users/hunte/repos/trade/data/', symbols)
-strategy = SimpleBuy(bars, events)
+strategy = SMACrossover(bars, events)
 port = NaivePortfolio(bars, events, None, 1000)
 broker = SimulatedExecutionHandler(events)
 
@@ -48,7 +49,7 @@ while True:
     # 10-Minute heartbeat
     #time.sleep(10*60)
     print('end of hb, latest bar: ', bars.get_latest_bars(symbols[0], N=1)[0])
-    if y < 10:
+    if y < 50:
         y += 1
         pass
     else:

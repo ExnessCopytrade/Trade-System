@@ -95,54 +95,68 @@ class SMACrossover(Strategy):
 
     def __init__(self, bars, events):
         self.bars = bars
+        self.symbol_list = self.bars.symbol_list
         self.events = events
         self.slow = 20 # the longer period
         self.fast = 5 # the Shorter period
+        self.count = 1
+
+    # eventually I will generalize my strategy and
+    # move my indicators into their own class to be more flexible
+    # i hope these work correctly
+    def SMA(self, symbol, period):
+        # first check that there are enough bars to calculate
+        b = self.bars.get_latest_bars(symbol, period)
+        if len(b) < period:
+            print('SMA error: len(b)= ', len(b), ' and p=', period)
+            raise Exception
+
+        accum = 0
+        for symbol,date,open,high,low,close,adj,vol in b:
+            accum += close
+        return accum/period
+
+    def SMA_back1(self, symbol, period):
+        # first check that there are enough bars to calculate
+        b = self.bars.get_latest_bars(symbol, period+1)
+        if len(b) < period+1:
+            print('SMA_back1 error: len(b)= ', len(b), ' and p+1=', period+1)
+            raise Exception
+
+        accum = 0
+        for symbol,date,open,high,low,close,adj,vol in b[:-1]:
+            accum += close
+        return accum/period
 
     def calculate_signals(self, event):
         '''
         Generate a single signal since we are dealing with a single symbol
         '''
         # close logic here? implement later
-        try:
-            s1 = SMA_back1(self.slow)
-            f1 = SMA_back1(self.fast)
-            s2 = SMA(self.slow)
-            f2 = SMA(self.fast)
-        except:
-            return
-        else:
-            if s1 < f1 and s2 > f2:
-                # cross below
-                self.events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'SHORT'))
-            elif s1 > f1 and s2 < f2:
-                # cross above
-                self.events.append(SignalEvent(None, bars.get_latest_bars(N=1)[0][0], 'LONG'))
+        if event.type == 'MARKET':
+            for s in self.symbol_list:
+                try:
+                    s1 = self.SMA_back1(s, self.slow)
+                    f1 = self.SMA_back1(s, self.fast)
+                    s2 = self.SMA(s, self.slow)
+                    f2 = self.SMA(s, self.fast)
+                    print('slow=', s2)
+                    print('fast=', f2)
+                    with open('SMA.csv','a') as file:
+                            print(self.count)
+                            self.count += 1
+                            file.write('{},{}\n'.format(s2,f2))
 
-    # eventually I will generalize my strategy and
-    # move my indicators into their own class to be more flexible
-    # i hope these work correctly
-    def SMA(p):
-        # first check that there are enough bars to calculate
-        b = bars.get_latest_bars(p)
-        if len(b) < p:
-            raise Exception
-
-        accum = 0
-        for date,open,high,low,close,adj,vol in b:
-            accum += close
-        return accum/p
-
-    def SMA_back1(p):
-        # first check that there are enough bars to calculate
-        b = bars.get_latest_bars(p+1)
-        if len(b) < p+1:
-            raise Exception
-
-        accum = 0
-        for date,open,high,low,close,adj,vol in b[:-1]:
-            accum += close
-        return accum/p
+                except Exception as e:
+                    print(e)
+                    return
+                else:
+                    if s1 < f1 and s2 > f2:
+                        # cross below
+                        self.events.append(SignalEvent(s, self.bars.get_latest_bars(s, N=1)[0][0], 'SHORT'))
+                    elif s1 > f1 and s2 < f2:
+                        # cross above
+                        self.events.append(SignalEvent(s, self.bars.get_latest_bars(s, N=1)[0][0], 'LONG'))
 
 class SimpleBuy(Strategy):
     '''
